@@ -102,13 +102,9 @@ namespace oscriptGUI
             _panelMainContainer.Controls.Add(_panelControlContainer);
             _panelMainContainer.Controls.Add(_panelTitleContainer);
 
-            _panelMainContainer.Dock = DockStyle.Top;
-            _panelMainContainer.MinimumSize = new Size(150, 22);
-            _panelMainContainer.AutoSize = true;
-            _panelMainContainer.AutoSizeMode = AutoSizeMode.GrowAndShrink;
 
             _panelTitleContainer.Dock = DockStyle.Left;
-            _panelTitleContainer.MinimumSize = new Size(50, 21);
+            _panelTitleContainer.MinimumSize = new Size(10, 21);
             _panelTitleContainer.AutoSize = true;
             _panelTitleContainer.AutoSizeMode = AutoSizeMode.GrowAndShrink;
             _label = new Label();
@@ -117,12 +113,19 @@ namespace oscriptGUI
             _label.Dock = DockStyle.Fill;
 
             //# Установка параметров панели для поля с данными
-            _panelControlContainer.Dock = DockStyle.Fill;
-            _panelControlContainer.MinimumSize = new Size(100, 21);
-            _panelControlContainer.AutoSize = true;
+
+            _panelControlContainer.MinimumSize = new Size(10, 21);
             _panelControlContainer.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            _panelControlContainer.AutoSize = true;
+            _panelControlContainer.Dock = DockStyle.Fill;
 
             this._parentControl.Controls.Add(_panelMainContainer);
+
+            _panelMainContainer.Dock = DockStyle.Top;
+            _panelMainContainer.MinimumSize = new Size(150, 22);
+            _panelMainContainer.AutoSize = true;
+            _panelMainContainer.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+
             _panelMainContainer.BringToFront();
         }
 
@@ -296,7 +299,17 @@ namespace oscriptGUI
                     _panelTitleContainer.Visible = false;
                     break;
                 case (int)EnumTitleLocation.Right:
-                    _panelTitleContainer.Dock = DockStyle.Right;
+                    if (this._formFieldType == (int)EnumFormFieldType.CheckBoxField)
+                    {
+                        _panelControlContainer.Dock = DockStyle.Left;
+                        _panelTitleContainer.Dock = DockStyle.Fill;
+                        _panelTitleContainer.BringToFront();
+                    } else
+                    {
+                        _panelTitleContainer.Dock = DockStyle.Right;
+                        _panelControlContainer.Dock = DockStyle.Fill;
+                        _panelControlContainer.BringToFront();
+                    }
                     break;
                 case (int)EnumTitleLocation.Top:
                     _panelTitleContainer.Dock = DockStyle.Top;
@@ -673,7 +686,13 @@ namespace oscriptGUI
         public int Width
         {
             get { return _item.Width; }
-            set { _item.Width = value; }
+            set {
+                int oldHeight = _panelMainContainer.Height;
+                _panelMainContainer.AutoSize = false;
+                _panelMainContainer.Width = value;
+                _panelMainContainer.Height = oldHeight;
+                _panelMainContainer.MinimumSize = new Size(value, oldHeight);
+            }
         }
 
         /// <summary>
@@ -683,7 +702,9 @@ namespace oscriptGUI
         public bool AutoSize
         {
             get { return _item.AutoSize; }
-            set { _item.AutoSize = value; }
+            set {
+                _panelMainContainer.AutoSize = value;
+            }
         }
 
         /// <summary>
